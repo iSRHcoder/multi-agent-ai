@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
-import proxy from "express-http-proxy";
-import cookieParser from "cookie-parser";
+import connectDB from "./config/db.js";
+import authRouter from "./routes/authRoute.js";
 
 dotenv.config();
 
@@ -15,14 +15,14 @@ app.use(
     credentials: true,
   }),
 );
-app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use("/auth", proxy(process.env.AUTH_SERVICE));
+app.use("/", authRouter);
 
+//----------health check-------------
 app.get("/health", (req, res) => {
   res.status(200).json({
-    message: "Gateway server is healthy",
+    message: "Auth server is healthy",
     status: "success",
   });
 });
@@ -30,5 +30,6 @@ app.get("/health", (req, res) => {
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  console.log(`gateway started at port - ${PORT}`);
+  console.log(`Auth started at port - ${PORT}`);
+  connectDB();
 });
