@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import connectDB from './src/config/db.js';
-import authRouter from './src/routes/authRoute.js';
+import chatRouter from './src/routes/chatRoute.js';
 
 dotenv.config();
 
@@ -17,12 +17,12 @@ app.use(
 );
 app.use(express.json());
 app.use(morgan('dev'));
-app.use('/', authRouter);
+app.use('/', chatRouter);
 
 //----------health check-------------
 app.get('/health', (req, res) => {
   res.status(200).json({
-    message: 'Auth server is healthy',
+    message: 'chat server is healthy',
     status: 'success',
   });
 });
@@ -30,6 +30,6 @@ app.get('/health', (req, res) => {
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  console.log(`Auth started at port - ${PORT}`);
+  console.log(`Chat started at port - ${PORT}`);
   connectDB();
 });

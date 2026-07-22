@@ -1,8 +1,9 @@
-import redis from '../../../shared/redis/redis';
+import redis from '../../../shared/redis/redis.js';
 
 const protect = async (req, res, next) => {
   try {
     const sessionId = req.cookies?.session;
+
     if (!sessionId) {
       return res.status(400).json({
         status: 'failed',
@@ -10,13 +11,22 @@ const protect = async (req, res, next) => {
       });
     }
 
-    const session = await redis.get(`session:${sessionId}`);
+    const key = `session:${sessionId}`;
+    const session = await redis.get(key);
+    //console.log('session:', session);
     if (!session) {
-return res.status(400).json({
+      return res.status(400).json({
         status: 'failed',
         message: 'Session expired, Please Login again',
       });
     }
     req.user = JSON.parse(session);
-  } catch (error) {}
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      message: `Protect error ${error}`,
+    });
+  }
 };
+
+export default protect;

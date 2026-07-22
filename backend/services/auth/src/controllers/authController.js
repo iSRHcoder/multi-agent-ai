@@ -1,7 +1,7 @@
-import { getAuth } from "firebase-admin/auth";
-import { app } from "../config/firebase.js";
-import User from "../models/userModel.js";
-import redis from "../../../shared/redis/redis.js";
+import { getAuth } from 'firebase-admin/auth';
+import { app } from '../config/firebase.js';
+import User from '../models/userModel.js';
+import redis from '../../../../shared/redis/redis.js';
 
 export const login = async (req, res) => {
   try {
@@ -20,35 +20,36 @@ export const login = async (req, res) => {
         avatar: decoded.picture,
       });
     }
-
     const sessionId = crypto.randomUUID();
+    const key = `session:${sessionId}`;
+
     await redis.set(
-      `session-${sessionId}`,
+      key,
       JSON.stringify({
         userId: user._id,
         name: user.name,
         email: user.email,
         avatar: user.avatar,
       }),
-      "EX",
-      7 * 24 * 60 * 60,
+      'EX',
+      7 * 24 * 60 * 60
     );
 
-    res.cookie("session", sessionId, {
+    res.cookie('session', sessionId, {
       httpOnly: true,
       secure: false,
-      sameSite: "strict",
+      sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
       success: true,
-      message: "Login successful.",
+      message: 'Login successful.',
       data: { user },
     });
   } catch (error) {
     res.status(500).json({
-      message: "Login Error",
+      message: 'Login Error',
       error: error.message,
     });
   }
@@ -59,15 +60,15 @@ export const logtout = async (req, res) => {
     const sessionId = req.cookies?.session;
     await redis.del(`session-${sessionId}`);
 
-    res.clearCookie("session");
+    res.clearCookie('session');
 
     return res.status(200).json({
       success: true,
-      message: "Login successful.",
+      message: 'Login successful.',
     });
   } catch (error) {
     res.status(500).json({
-      message: "Logout Error",
+      message: 'Logout Error',
       error: error.message,
     });
   }
