@@ -19,21 +19,41 @@ workflow.addNode('ppt', pptAgent);
 workflow.addNode('search', searchAgent);
 
 workflow.addEdge('__start__', 'router');
-workflow.addConditionalEdges('router', (state) => {
-  switch (state.agent) {
-    case 'chat':
-      return 'chat';
-    case 'search':
-      return 'search';
-    case 'coding':
-      return 'coding';
-    case 'vision':
-      return 'vision';
-    case 'pdf':
-      return 'pdf';
-    case 'ppt':
-      return 'ppt';
-    default:
-      break;
+workflow.addConditionalEdges(
+  'router',
+  (state) => {
+    switch (state.agent) {
+      case 'chat':
+        return 'chat';
+      case 'search':
+        return 'search';
+      case 'coding':
+        return 'coding';
+      case 'vision':
+        return 'vision';
+      case 'pdf':
+        return 'pdf';
+      case 'ppt':
+        return 'ppt';
+      default:
+        return 'chat';
+    }
+  },
+  {
+    chat: 'chat',
+    search: 'search',
+    coding: 'coding',
+    pdf: 'pdf',
+    ppt: 'ppt',
+    vision: 'vision',
   }
-});
+);
+
+workflow.addEdge('search', 'chat');
+workflow.addEdge('chat', '__end__');
+workflow.addEdge('coding', '__end__');
+workflow.addEdge('pdf', '__end__');
+workflow.addEdge('ppt', '__end__');
+workflow.addEdge('vision', '__end__');
+
+export const graph = workflow.compile();

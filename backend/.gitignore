@@ -4,4 +4,5 @@
 **/build
 coverage/
 *.log
+*.txt
 **/serviceAccountKey.json
