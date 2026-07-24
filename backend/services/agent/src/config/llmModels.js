@@ -1,4 +1,4 @@
-import { ChatGroq } from '@langchain/core';
+import { ChatGroq } from '@langchain/groq';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 //import { ChatOpenAI } from '@langchain/openai';
 
