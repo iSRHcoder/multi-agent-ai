@@ -51,8 +51,9 @@ export const saveMessage = async (req, res) => {
   try {
     const { conversationId, role, content } = req.body;
 
-    if (!conversationId || !role || !content)
+    if (!conversationId || !role || !content) {
       return res.status(404).json({ message: 'No conversationId or role or content' });
+    }
 
     const message = await Message.create({
       conversationId,
@@ -69,7 +70,10 @@ export const saveMessage = async (req, res) => {
 
 export const getMessage = async (req, res) => {
   try {
-    if (!conversationId) return res.status(404).json({ message: 'No conversationId' });
+    const { conversationId } = req.body;
+    if (!conversationId) {
+      return res.status(404).json({ message: 'No conversationId' });
+    }
 
     const message = await Message.create({
       conversationId: req.params.conversationId,

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import connectDB from './src/config/db.js';
+import agentRouter from './src/routes/agentRoute.js';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(
 );
 app.use(express.json());
 app.use(morgan('dev'));
+app.use('/', agentRouter);
 
 //----------health check-------------
 app.get('/health', (req, res) => {

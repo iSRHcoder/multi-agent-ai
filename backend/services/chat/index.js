@@ -17,7 +17,7 @@ app.use(
 );
 app.use(express.json());
 app.use(morgan('dev'));
-app.use('/', chatRouter);
+app.use('', chatRouter);
 
 //----------health check-------------
 app.get('/health', (req, res) => {
