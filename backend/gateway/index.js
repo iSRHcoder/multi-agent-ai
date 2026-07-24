@@ -26,6 +26,12 @@ app.use('/api/chat', protect, proxyWithHeader(process.env.CHAT_SERVICE));
 app.use('/api/agent', protect, proxyWithHeader(process.env.AGENT_SERVICE));
 app.use('/api', userRoute);
 
+console.log({
+  AUTH_SERVICE: process.env.AUTH_SERVICE,
+  CHAT_SERVICE: process.env.CHAT_SERVICE,
+  AGENT_SERVICE: process.env.AGENT_SERVICE,
+});
+
 app.get('/health', (req, res) => {
   res.status(200).json({
     message: 'Gateway server is healthy',
