@@ -1,6 +1,7 @@
 import express from 'express';
-import { createConnection } from 'mongoose';
+
 import {
+  createConversation,
   getConversations,
   getMessage,
   saveMessage,
@@ -9,7 +10,7 @@ import {
 
 const chatRouter = express.Router();
 
-chatRouter.get('/create-conversation', createConnection);
+chatRouter.get('/create-conversation', createConversation);
 chatRouter.get('/get-conversations', getConversations);
 chatRouter.post('/update-conversation', updateConversation);
 
