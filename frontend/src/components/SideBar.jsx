@@ -96,7 +96,7 @@ const SideBar = () => {
             const isActive = selectedConversation?._id == conv?._id;
             return (
               <div
-                key={i}
+                key={conv._id}
                 onClick={() => {
                   console.log(conv);
                   dispatch(setSelectedConversation(conv));
@@ -129,7 +129,7 @@ const SideBar = () => {
           {userData ? (
             <div className="flex cursor-pointer items-center gap-2.5 rounded-xl px-2 py-2 transition-colors duration-150 hover:bg-white/5">
               <div className="relative shrink-0">
-                {userData?.avatar || !imageError ? (
+                {userData?.avatar && !imageError ? (
                   <img
                     className="h-9 w-9 rounded-[10px] border-2 border-indigo-500/25 object-cover"
                     src={userData.avatar}
@@ -158,8 +158,9 @@ const SideBar = () => {
                   <Coins size={16} />
                 </button>
                 <button
-                  onClick={() => {
-                    (logout(), dispatch(setUserData(null)));
+                  onClick={async () => {
+                    await logout();
+                    dispatch(setUserData(null));
                   }}
                   className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-[7px] border-none bg-transparent text-slate-600 transition-all duration-150 hover:bg-white/8 hover:text-slate-400"
                 >
