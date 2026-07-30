@@ -12,11 +12,10 @@ const Home = () => {
   const { userData } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  console.log('userData:', userData);
-
   const handleLogin = async (token) => {
     try {
       const { data } = await backendApi.post('/api/auth/login', { token });
+
       dispatch(setUserData(data));
     } catch (error) {
       console.log(`error : ${error}`);
@@ -43,7 +42,9 @@ const Home = () => {
               <h2 className="text-[17px] font-semibold tracking-tight text-slate-100">
                 Welcome to CortexAI
               </h2>
-              <p className="text-[13px] text-slate-500">Please login to continue using the app.</p>
+              <p className="text-[13px] text-slate-500">
+                Please login to continue using the app.
+              </p>
               <button
                 className="m-2 flex w-full cursor-pointer items-center justify-center gap-3 rounded-full border border-gray-400 bg-white px-3 py-2 text-lg font-medium text-gray-800 shadow-sm transition-all duration-200 hover:bg-gray-200 hover:shadow-md active:bg-gray-400"
                 onClick={googleLogin}
