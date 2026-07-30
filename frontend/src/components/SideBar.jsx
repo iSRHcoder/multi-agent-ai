@@ -4,6 +4,7 @@ import {
   LogOut,
   MessageSquare,
   PanelLeft,
+  PanelRight,
   PenBox,
   Plus,
   User,
@@ -41,16 +42,81 @@ const SideBar = () => {
     const data = await createConversation();
     dispatch(addConversation(data));
   };
+
+  if (collapsed)
+    return (
+      <div
+        className={`${collapsed ? 'hidden lg:flex' : 'hidden'} h-screen w-14 shrink-0 flex-col items-center gap-1 border-r border-white/6 bg-[#0d0f14] py-4`}
+      >
+        <button
+          title={'CortexAI'}
+          onClick={() => setCollapsed(false)}
+          className="mb-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl bg-transparent text-slate-500 transition-colors duration-150 hover:bg-white/5 hover:text-slate-200"
+        >
+          <PanelRight />
+        </button>
+        <button
+          title={'Add New Chat'}
+          onClick={handleCreateConversation}
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border-none bg-transparent text-slate-500 transition-colors duration-150 hover:bg-white/5 hover:text-slate-200"
+        >
+          <Plus size={17} />
+        </button>
+        {/* Conversations */}
+        <div className="flex-1 overflow-y-auto px-2.5 pt-5 pb-2 [scrollbar:none] [&::-webkit-scrollbar]:hidden">
+          {conversations.map((conv, i) => {
+            const isActive = selectedConversation?._id == conv?._id;
+            return (
+              <div
+                key={conv._id}
+                onClick={() => {
+                  console.log(conv);
+                  dispatch(setSelectedConversation(conv));
+                }}
+                className={`mb-1 flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-150 ${
+                  isActive
+                    ? 'border-indigo-500/20 bg-indigo-800'
+                    : 'hover:bg-indigo-900'
+                }`}
+              >
+                <div
+                  title={conv?.title || 'New Chat'}
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-colors duration-150 ${isActive ? 'bg-gray-900/50 text-gray-200' : 'bg-white/5 text-slate-500'}`}
+                >
+                  <MessageSquare size={15} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div title={userData.name} className="relative shrink-0">
+          {userData?.avatar && !imageError ? (
+            <img
+              className="h-9 w-9 rounded-[10px] border-2 border-indigo-500/25 object-cover"
+              src={userData.avatar}
+              alt={`${userData.name} avatar`}
+              onError={() => {
+                setImageError(true);
+              }}
+            />
+          ) : (
+            <div className="flex h-9 w-9 items-center justify-center rounded-[10px] border-2 border-white/6">
+              <User />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+
   return (
     <div className="fixed inset-y-0 left-0 z-50 h-screen w-67.5 shrink-0 border-r border-white/6 bg-[#0d0f14] lg:static">
       <div className="flex h-full flex-col">
         {/* Header */}
         <div className="flex items-center gap-2.5 border-b border-white/6 px-4 py-4">
           <div
-            onClick={() => {
-              setCollapsed(true);
-            }}
-            className="hidden h-7 w-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-slate-500 transition-colors duration-150 hover:bg-white/5 hover:text-slate-200 lg:flex"
+            onClick={() => setCollapsed(true)}
+            className={`${collapsed ? 'hidden' : 'hidden lg:flex'} h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-transparent text-slate-500 transition-colors duration-150 hover:bg-white/5 hover:text-slate-200`}
           >
             <PanelLeft />
           </div>
