@@ -35,7 +35,7 @@ const SideBar = () => {
       dispatch(setConversations(data));
     };
     getConv();
-  }, []);
+  }, [userData?.success]);
 
   const handleCreateConversation = async () => {
     const data = await createConversation();
