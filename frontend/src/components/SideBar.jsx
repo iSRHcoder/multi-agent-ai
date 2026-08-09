@@ -38,6 +38,10 @@ const SideBar = () => {
     getConv();
   }, [userData?.userId]);
 
+  useEffect(() => {
+    setImageError(false);
+  }, [userData?.avatar]);
+
   const handleCreateConversation = async () => {
     const data = await createConversation();
     dispatch(addConversation(data));
@@ -48,6 +52,7 @@ const SideBar = () => {
       <div
         className={`${collapsed ? 'hidden lg:flex' : 'hidden'} h-screen w-14 shrink-0 flex-col items-center gap-1 border-r border-white/6 bg-[#0d0f14] py-4`}
       >
+        {/* Collapse */}
         <button
           title={'CortexAI'}
           onClick={() => setCollapsed(false)}
@@ -55,6 +60,7 @@ const SideBar = () => {
         >
           <PanelRight />
         </button>
+        {/* New chat button */}
         <button
           title={'Add New Chat'}
           onClick={handleCreateConversation}
@@ -70,7 +76,6 @@ const SideBar = () => {
               <div
                 key={conv._id}
                 onClick={() => {
-                  console.log(conv);
                   dispatch(setSelectedConversation(conv));
                 }}
                 className={`mb-1 flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-150 ${
@@ -90,7 +95,10 @@ const SideBar = () => {
           })}
         </div>
 
-        <div title={userData.name} className="relative shrink-0">
+        <div
+          title={userData.name}
+          className="relative shrink-0 hover:cursor-pointer"
+        >
           {userData?.avatar && !imageError ? (
             <img
               className="h-9 w-9 rounded-[10px] border-2 border-indigo-500/25 object-cover"
@@ -200,7 +208,7 @@ const SideBar = () => {
                     className="h-9 w-9 rounded-[10px] border-2 border-indigo-500/25 object-cover"
                     src={userData.avatar}
                     alt={`${userData.name} avatar`}
-                    onError={() => {
+                    onError={(e) => {
                       setImageError(true);
                     }}
                   />
@@ -226,7 +234,6 @@ const SideBar = () => {
                 <button
                   onClick={async () => {
                     await logout();
-
                     dispatch(setUserData(null));
                     dispatch(setConversations([]));
                     dispatch(setSelectedConversation(null));
