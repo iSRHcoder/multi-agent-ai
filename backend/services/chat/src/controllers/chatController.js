@@ -80,7 +80,7 @@ export const getMessage = async (req, res) => {
 
     const messages = await Message.find({
       conversationId,
-    }).sort({ createdAt: -1 });
+    });
 
     res.status(200).json(messages);
   } catch (error) {

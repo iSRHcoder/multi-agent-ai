@@ -1,29 +1,76 @@
 import { Mic, Paperclip, Send } from 'lucide-react';
 import React, { useState } from 'react';
 import sendMessage from '../features/sendMessage';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addMessage, setMessages } from '../redux/messagesSlice';
 
 const ChatInput = () => {
   const [value, setValue] = useState('');
   const { selectedConversation } = useSelector((state) => state.conversation);
+  const { messages } = useSelector((state) => state.message);
+
+  const dispatch = useDispatch();
 
   const handleSendMessage = async () => {
+    const prompt = value.trim();
+
+    if (!prompt || !selectedConversation?._id) return;
+
     const payload = {
-      prompt: value.trim(),
+      prompt,
       conversationId: selectedConversation._id,
     };
-    const data = await sendMessage(payload);
-    console.log(data);
+
+    // Add user message immediately
+    dispatch(
+      addMessage({
+        _id: `temp-user-${Date.now()}`,
+        conversationId: selectedConversation._id,
+        role: 'user',
+        content: prompt,
+      })
+    );
+
+    // Clear input
+    setValue('');
+
+    try {
+      const data = await sendMessage(payload);
+
+      console.log(data);
+
+      // Add AI response
+      dispatch(
+        addMessage({
+          _id: `temp-ai-${Date.now()}`,
+          conversationId: selectedConversation._id,
+          role: 'assistant',
+          content: data.response,
+        })
+      );
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="w-full overflow-hidden border-t border-white/6 bg-[#0d0f14] px-3 py-4 md:px-5">
       <div className="flex flex-col gap-2 rounded-2xl border border-white/7 bg-white/3 px-4 pt-3.5 pb-3">
         <textarea
           className="scrollbar:none {&::-webkit-scrollbar]:hidden w-full resize-none bg-transparent text-[14px] leading-relaxed text-slate-200 outline-none placeholder:text-slate-600 disabled:opacity-50"
           placeholder="Ask Anything..."
-          rows={3}
+          rows={2}
           onChange={(e) => setValue(e.target.value)}
-          value={value.trim()}
+          value={value}
+          onKeyDown={handleKeyDown}
         />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -35,7 +82,7 @@ const ChatInput = () => {
             </button>
           </div>
           <button
-            disabled={!value}
+            disabled={!value.trim()}
             className={`flex h-8 w-8 items-center justify-center rounded-lg border-none transition-all duration-150 ${
               value.trim()
                 ? 'cursor-pointer bg-linear-to-br from-indigo-500 to-violet-700 text-white hover:opacity-80'

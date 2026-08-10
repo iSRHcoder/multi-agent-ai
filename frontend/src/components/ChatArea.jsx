@@ -5,7 +5,7 @@ import Nav from './Nav';
 import { useDispatch, useSelector } from 'react-redux';
 import getMessages from '../features/getMessages';
 import sendMessage from '../features/sendMessage';
-import setMessages from '../redux/messagesSlice';
+import { setMessages } from '../redux/messagesSlice';
 
 const ChatArea = () => {
   const { selectedConversation } = useSelector((state) => state.conversation);
@@ -17,8 +17,6 @@ const ChatArea = () => {
 
       try {
         const data = await getMessages(selectedConversation._id);
-
-        console.log('message data', data);
 
         dispatch(setMessages(data));
       } catch (error) {
