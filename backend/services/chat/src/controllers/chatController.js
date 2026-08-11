@@ -37,7 +37,20 @@ export const getConversations = async (req, res) => {
 export const updateConversation = async (req, res) => {
   try {
     const { id, title } = req.body;
-    const conversation = await Conversation.findByIdAndUpdate(id, { title });
+
+    if (!id || !title?.trim()) {
+      return res.status(400).json({
+        message: 'Conversation id and title are required',
+      });
+    }
+
+    const conversation = await Conversation.findByIdAndUpdate(id, { title }, { new: true });
+
+    if (!conversation) {
+      return res.status(404).json({
+        message: 'Conversation not found',
+      });
+    }
 
     res.status(200).json(conversation);
   } catch (error) {

@@ -3,6 +3,13 @@ import React, { useState } from 'react';
 import sendMessage from '../features/sendMessage';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMessage, setMessages } from '../redux/messagesSlice';
+import { createConversation } from '../features/createConversation';
+import { updateConversation } from '../features/updateConversation';
+import {
+  addConversation,
+  setConvTitle,
+  setSelectedConversation,
+} from '../redux/conversationSlice';
 
 const ChatInput = () => {
   const [value, setValue] = useState('');
@@ -13,19 +20,52 @@ const ChatInput = () => {
 
   const handleSendMessage = async () => {
     const prompt = value.trim();
+    if (!prompt) return;
 
-    if (!prompt || !selectedConversation?._id) return;
+    let conversation = selectedConversation;
+
+    if (!conversation) {
+      const conv = await createConversation();
+
+      if (!conv?._id) {
+        console.error('Failed to create conversation');
+        return;
+      }
+
+      dispatch(setSelectedConversation(conv));
+      dispatch(addConversation(conv));
+
+      conversation = conv;
+    }
+
+    if (conversation.title === 'New Chat') {
+      try {
+        const updatedConversation = await updateConversation({
+          id: conversation._id,
+          title: prompt,
+        });
+
+        dispatch(
+          setConvTitle({
+            conversationId: conversation._id,
+            title: updatedConversation.title,
+          })
+        );
+      } catch (error) {
+        console.error('Failed to update conversation title:', error);
+      }
+    }
 
     const payload = {
       prompt,
-      conversationId: selectedConversation._id,
+      conversationId: conversation?._id,
     };
 
     // Add user message immediately
     dispatch(
       addMessage({
         _id: `temp-user-${Date.now()}`,
-        conversationId: selectedConversation._id,
+        conversationId: conversation._id,
         role: 'user',
         content: prompt,
       })
@@ -43,7 +83,7 @@ const ChatInput = () => {
       dispatch(
         addMessage({
           _id: `temp-ai-${Date.now()}`,
-          conversationId: selectedConversation._id,
+          conversationId: conversation._id,
           role: 'assistant',
           content: data.response,
         })

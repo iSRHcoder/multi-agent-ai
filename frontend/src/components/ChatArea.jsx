@@ -15,6 +15,8 @@ const ChatArea = () => {
     const getMessage = async () => {
       if (!selectedConversation) return;
 
+      if (selectedConversation.title === 'New Chat') return;
+
       try {
         const data = await getMessages(selectedConversation._id);
 
@@ -23,8 +25,9 @@ const ChatArea = () => {
         console.error('Failed to get messages:', error);
       }
     };
+
     getMessage();
-  }, [selectedConversation]);
+  }, [selectedConversation?._id, dispatch]);
 
   return (
     <div className="flex flex-1 flex-col">

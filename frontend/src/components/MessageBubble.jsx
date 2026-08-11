@@ -13,8 +13,8 @@ const MessageBubble = ({ role, content }) => {
       <div
         className={` ${
           isUser
-            ? 'max-w-[75%] rounded-xl rounded-tr-none bg-linear-to-br from-indigo-500 to-violet-700 px-4 py-3 text-white'
-            : 'w-full max-w-212.5 rounded-xl rounded-tl-none bg-linear-to-br from-slate-700 to-slate-900 px-4 py-3 text-slate-200'
+            ? 'max-w-[75%] rounded-xl rounded-tr-none bg-gray-950 px-4 py-3 text-white'
+            : 'max-w-[85%] rounded-xl rounded-tl-none bg-slate-900 px-4 py-3 text-slate-200'
         } `}
       >
         {isUser ? (
