@@ -42,7 +42,7 @@ const ChatInput = () => {
       try {
         const updatedConversation = await updateConversation({
           id: conversation._id,
-          title: prompt,
+          title: prompt.slice(0, 40),
         });
 
         dispatch(

@@ -12,21 +12,42 @@ const ChatArea = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getMessage = async () => {
-      if (!selectedConversation) return;
+    let isCurrent = true;
 
-      if (selectedConversation.title === 'New Chat') return;
+    const getMessage = async () => {
+      // Always clear messages when conversation changes
+      dispatch(setMessages([]));
+
+      // No selected conversation = new/empty chat
+      if (!selectedConversation?._id) {
+        return;
+      }
+
+      // New Chat should always start empty
+      if (selectedConversation.title === 'New Chat') {
+        return;
+      }
 
       try {
         const data = await getMessages(selectedConversation._id);
 
-        dispatch(setMessages(data));
+        // Prevent an old API response from updating
+        // the currently selected conversation
+        if (isCurrent) {
+          dispatch(setMessages(data));
+        }
       } catch (error) {
-        console.error('Failed to get messages:', error);
+        if (isCurrent) {
+          console.error('Failed to get messages:', error);
+        }
       }
     };
 
     getMessage();
+
+    return () => {
+      isCurrent = false;
+    };
   }, [selectedConversation?._id, dispatch]);
 
   return (

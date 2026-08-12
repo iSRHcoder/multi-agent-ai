@@ -16,6 +16,7 @@ const Nav = () => {
           </div>
 
           <div className="text-[14px] font-semibold tracking-tight text-slate-100">
+            {/* "min-w-0 flex-1 truncate text-[14px] font-semibold tracking-tight text-slate-100" */}
             {selectedConversation?.title || 'New Chat'}
           </div>
 
