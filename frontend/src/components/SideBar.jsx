@@ -20,6 +20,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import logout from '../features/logout.js';
 import { setUserData } from '../redux/userSlice.js';
+import { setMessages } from '../redux/messagesSlice.js';
 
 const SideBar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -45,6 +46,12 @@ const SideBar = () => {
   const handleCreateConversation = async () => {
     const data = await createConversation();
     dispatch(addConversation(data));
+  };
+
+  const handleSelectConversation = (conversation) => {
+    // Clear old chat messages immediately
+    dispatch(setMessages([]));
+    dispatch(setSelectedConversation(conversation));
   };
 
   if (collapsed)
@@ -75,9 +82,7 @@ const SideBar = () => {
             return (
               <div
                 key={conv._id}
-                onClick={() => {
-                  dispatch(setSelectedConversation(conv));
-                }}
+                onClick={() => handleSelectConversation(conv)}
                 className={`mb-1 flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-150 ${
                   isActive
                     ? 'border-indigo-500/20 bg-indigo-800'
@@ -170,10 +175,7 @@ const SideBar = () => {
             return (
               <div
                 key={conv._id}
-                onClick={() => {
-                  console.log(conv);
-                  dispatch(setSelectedConversation(conv));
-                }}
+                onClick={() => handleSelectConversation(conv)}
                 className={`mb-1 flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-150 ${
                   isActive
                     ? 'border-indigo-500/20 bg-indigo-800'
