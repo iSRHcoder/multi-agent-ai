@@ -3,6 +3,7 @@ import { ChevronDown, LoaderCircle } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import MessageBubble from './MessageBubble';
 import { Skeleton } from './ui/skeleton';
+import { DotLoader } from './ui/DotLoader';
 
 const MessageList = () => {
   const { selectedConversation } = useSelector((state) => state.conversation);
@@ -182,10 +183,11 @@ const MessageList = () => {
             {isAiResponding && (
               <div className="flex justify-start">
                 <div className="rounded-xl rounded-tl-none bg-slate-900 px-4 py-3">
-                  <LoaderCircle
+                  {/* <LoaderCircle
                     size={18}
                     className="animate-spin text-slate-500"
-                  />
+                  /> */}
+                  <DotLoader />
                 </div>
               </div>
             )}

@@ -46,7 +46,16 @@ const SideBar = () => {
 
   const handleCreateConversation = async () => {
     const data = await createConversation();
+
+    if (!data?._id) {
+      console.error('Failed to create conversation');
+      return;
+    }
+
+    dispatch(setMessages([]));
+    dispatch(setMessagesLoading(false));
     dispatch(addConversation(data));
+    dispatch(setSelectedConversation(data));
   };
 
   const handleSelectConversation = async (conversation) => {
