@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronDown, LoaderCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import MessageBubble from './MessageBubble';
 import { Skeleton } from './ui/skeleton';
@@ -61,7 +61,6 @@ const MessageList = () => {
   };
 
   // Automatically go to last message
-  // whenever conversation/messages change
   useEffect(() => {
     if (!selectedConversation || messages.length === 0) return;
 
@@ -183,10 +182,6 @@ const MessageList = () => {
             {isAiResponding && (
               <div className="flex justify-start">
                 <div className="rounded-xl rounded-tl-none bg-slate-900 px-4 py-3">
-                  {/* <LoaderCircle
-                    size={18}
-                    className="animate-spin text-slate-500"
-                  /> */}
                   <DotLoader />
                 </div>
               </div>
