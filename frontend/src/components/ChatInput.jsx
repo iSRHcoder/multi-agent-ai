@@ -114,7 +114,7 @@ const ChatInput = () => {
         <textarea
           className="scrollbar:none {&::-webkit-scrollbar]:hidden w-full resize-none bg-transparent text-[14px] leading-relaxed text-slate-200 outline-none placeholder:text-slate-600 disabled:opacity-50"
           placeholder="Ask Anything..."
-          rows={2}
+          rows={1}
           onChange={(e) => setValue(e.target.value)}
           value={value}
           onKeyDown={handleKeyDown}

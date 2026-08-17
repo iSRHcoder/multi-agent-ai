@@ -24,7 +24,7 @@ import { setMessages, setMessagesLoading } from '../redux/messagesSlice.js';
 import getMessages from '@/features/getMessages.js';
 
 const SideBar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => window.innerWidth < 1024);
   const [imageError, setImageError] = useState(false);
   const dispatch = useDispatch();
   const { conversations, selectedConversation } = useSelector(
@@ -79,7 +79,7 @@ const SideBar = () => {
   if (collapsed)
     return (
       <div
-        className={`${collapsed ? 'hidden lg:flex' : 'hidden'} h-screen w-14 shrink-0 flex-col items-center gap-1 border-r border-white/6 bg-[#0d0f14] py-4`}
+        className={`${collapsed ? 'flex' : 'hidden'} h-screen w-14 shrink-0 flex-col items-center gap-1 border-r border-white/6 bg-[#0d0f14] py-4`}
       >
         {/* Collapse */}
         <button
@@ -123,14 +123,14 @@ const SideBar = () => {
         </div>
 
         <div
-          title={userData.name}
+          title={userData?.name}
           className="relative shrink-0 hover:cursor-pointer"
         >
           {userData?.avatar && !imageError ? (
             <img
               className="h-9 w-9 rounded-[10px] border-2 border-indigo-500/25 object-cover"
-              src={userData.avatar}
-              alt={`${userData.name} avatar`}
+              src={userData?.avatar}
+              alt={`${userData?.name} avatar`}
               onError={() => {
                 setImageError(true);
               }}
@@ -151,7 +151,7 @@ const SideBar = () => {
         <div className="flex items-center gap-2.5 border-b border-white/6 px-4 py-4">
           <div
             onClick={() => setCollapsed(true)}
-            className={`${collapsed ? 'hidden' : 'hidden lg:flex'} h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-transparent text-slate-500 transition-colors duration-150 hover:bg-white/5 hover:text-slate-200`}
+            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-transparent text-slate-500 transition-colors duration-150 hover:bg-white/5 hover:text-slate-200"
           >
             <PanelLeft />
           </div>
@@ -230,8 +230,8 @@ const SideBar = () => {
                 {userData?.avatar && !imageError ? (
                   <img
                     className="h-9 w-9 rounded-[10px] border-2 border-indigo-500/25 object-cover"
-                    src={userData.avatar}
-                    alt={`${userData.name} avatar`}
+                    src={userData?.avatar}
+                    alt={`${userData?.name} avatar`}
                     onError={(e) => {
                       setImageError(true);
                     }}
@@ -245,7 +245,7 @@ const SideBar = () => {
 
               <div className="min-w-0 flex-1">
                 <p className="font-seminbold truncate text-[13.5px] text-slate-100">
-                  {userData.name || 'User'}
+                  {userData?.name || 'User'}
                 </p>
                 <p className="mt-px text-[11px] text-slate-600">
                   {'Free Plan'}
