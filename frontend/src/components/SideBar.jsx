@@ -20,7 +20,8 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import logout from '../features/logout.js';
 import { setUserData } from '../redux/userSlice.js';
-import { setMessages } from '../redux/messagesSlice.js';
+import { setMessages, setMessagesLoading } from '../redux/messagesSlice.js';
+import getMessages from '@/features/getMessages.js';
 
 const SideBar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -48,10 +49,22 @@ const SideBar = () => {
     dispatch(addConversation(data));
   };
 
-  const handleSelectConversation = (conversation) => {
+  const handleSelectConversation = async (conversation) => {
     // Clear old chat messages immediately
     dispatch(setMessages([]));
+    dispatch(setMessagesLoading(true));
     dispatch(setSelectedConversation(conversation));
+
+    try {
+      const data = await getMessages(conversation._id);
+
+      dispatch(setMessages(data));
+    } catch (error) {
+      console.error('Failed to load messages:', error);
+      dispatch(setMessages([]));
+    } finally {
+      dispatch(setMessagesLoading(false));
+    }
   };
 
   if (collapsed)

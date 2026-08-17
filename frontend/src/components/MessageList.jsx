@@ -1,15 +1,36 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, LoaderCircle } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import MessageBubble from './MessageBubble';
+import { Skeleton } from './ui/skeleton';
 
 const MessageList = () => {
   const { selectedConversation } = useSelector((state) => state.conversation);
 
-  const { messages } = useSelector((state) => state.message);
+  const { messages, isMessagesLoading, isAiResponding } = useSelector(
+    (state) => state.message
+  );
 
   const messagesContainerRef = useRef(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(false);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      setShowSkeleton(false);
+      return;
+    }
+    if (isMessagesLoading) {
+      setShowSkeleton(true);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setShowSkeleton(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [isMessagesLoading]);
 
   // Check whether user is at the bottom
   const checkScrollPosition = () => {
@@ -55,9 +76,40 @@ const MessageList = () => {
       <div
         ref={messagesContainerRef}
         onScroll={checkScrollPosition}
-        className="h-full scrollbar-none space-y-5 overflow-y-auto px-6 py-6 [&::-webkit-scrollbar]:hidden"
+        className="relative h-full space-y-5 overflow-y-auto px-6 py-6 [&::-webkit-scrollbar]:hidden"
       >
-        {messages.length === 0 || !selectedConversation ? (
+        {/* ================= SKELETON ================= */}
+        <div
+          className={`absolute inset-0 px-6 py-6 transition-opacity duration-300 ease-in-out ${
+            showSkeleton
+              ? 'pointer-events-auto opacity-100'
+              : 'pointer-events-none opacity-0'
+          }`}
+        >
+          <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
+            {/* User message skeleton */}
+            <div className="flex justify-end">
+              <Skeleton className="h-12 w-[45%]" />
+            </div>
+
+            {/* AI message skeleton */}
+            <div className="flex justify-start">
+              <div className="w-[65%] space-y-3 rounded-xl bg-slate-900 p-4">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-[90%]" />
+                <Skeleton className="h-3 w-[70%]" />
+              </div>
+            </div>
+
+            {/* User message skeleton */}
+            <div className="flex justify-end">
+              <Skeleton className="h-10 w-[35%]" />
+            </div>
+          </div>
+        </div>
+
+        {messages.length === 0 && (
+          // ================= EMPTY STATE =================
           <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
             <div className="flex flex-col gap-1.5">
               <h1 className="text-[20px] font-semibold tracking-tight text-slate-200">
@@ -89,7 +141,34 @@ const MessageList = () => {
               ))}
             </div>
           </div>
+        )}
+
+        {showSkeleton && selectedConversation ? (
+          // ================= SKELETON =================
+          <div className="absolute inset-0 px-6 py-6">
+            <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
+              {/* User message */}
+              <div className="flex justify-end">
+                <Skeleton className="h-12 w-[45%]" />
+              </div>
+
+              {/* AI message */}
+              <div className="flex justify-start">
+                <div className="w-[65%] space-y-3 rounded-xl bg-slate-900 p-4">
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-[90%]" />
+                  <Skeleton className="h-3 w-[70%]" />
+                </div>
+              </div>
+
+              {/* User message */}
+              <div className="flex justify-end">
+                <Skeleton className="h-10 w-[35%]" />
+              </div>
+            </div>
+          </div>
         ) : (
+          // ================= MESSAGES =================
           <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
             {messages.map((msg) => (
               <MessageBubble
@@ -98,6 +177,18 @@ const MessageList = () => {
                 content={msg.content}
               />
             ))}
+
+            {/* AI responding loader */}
+            {isAiResponding && (
+              <div className="flex justify-start">
+                <div className="rounded-xl rounded-tl-none bg-slate-900 px-4 py-3">
+                  <LoaderCircle
+                    size={18}
+                    className="animate-spin text-slate-500"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

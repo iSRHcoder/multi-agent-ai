@@ -2,7 +2,11 @@ import { Mic, Paperclip, Send } from 'lucide-react';
 import React, { useState } from 'react';
 import sendMessage from '../features/sendMessage';
 import { useDispatch, useSelector } from 'react-redux';
-import { addMessage, setMessages } from '../redux/messagesSlice';
+import {
+  addMessage,
+  setMessages,
+  setAiResponding,
+} from '../redux/messagesSlice';
 import { createConversation } from '../features/createConversation';
 import { updateConversation } from '../features/updateConversation';
 import {
@@ -14,13 +18,13 @@ import {
 const ChatInput = () => {
   const [value, setValue] = useState('');
   const { selectedConversation } = useSelector((state) => state.conversation);
-  const { messages } = useSelector((state) => state.message);
+  const { messages, isAiResponding } = useSelector((state) => state.message);
 
   const dispatch = useDispatch();
 
   const handleSendMessage = async () => {
     const prompt = value.trim();
-    if (!prompt) return;
+    if (!prompt || isAiResponding) return;
 
     let conversation = selectedConversation;
 
@@ -75,6 +79,7 @@ const ChatInput = () => {
     setValue('');
 
     try {
+      dispatch(setAiResponding(true));
       const data = await sendMessage(payload);
 
       console.log(data);
@@ -90,6 +95,8 @@ const ChatInput = () => {
       );
     } catch (error) {
       console.error('Failed to send message:', error);
+    } finally {
+      dispatch(setAiResponding(false));
     }
   };
 
@@ -122,7 +129,7 @@ const ChatInput = () => {
             </button>
           </div>
           <button
-            disabled={!value.trim()}
+            disabled={!value.trim() || isAiResponding}
             className={`flex h-8 w-8 items-center justify-center rounded-lg border-none transition-all duration-150 ${
               value.trim()
                 ? 'cursor-pointer bg-linear-to-br from-indigo-500 to-violet-700 text-white hover:opacity-80'

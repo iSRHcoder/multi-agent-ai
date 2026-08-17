@@ -9,7 +9,7 @@ const MessageBubble = ({ role, content }) => {
   const isUser = role === 'user';
 
   return (
-    <div className={`mt-5 flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div
         className={` ${
           isUser

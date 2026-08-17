@@ -5,6 +5,8 @@ const messageSlice = createSlice({
 
   initialState: {
     messages: [],
+    isMessagesLoading: false,
+    isAiResponding: false,
   },
 
   reducers: {
@@ -15,9 +17,17 @@ const messageSlice = createSlice({
     addMessage: (state, action) => {
       state.messages.push(action.payload);
     },
+    setMessagesLoading: (state, action) => {
+      state.isMessagesLoading = action.payload;
+    },
+
+    setAiResponding: (state, action) => {
+      state.isAiResponding = action.payload;
+    },
   },
 });
 
-export const { setMessages, addMessage } = messageSlice.actions;
+export const { setMessages, addMessage, setMessagesLoading, setAiResponding } =
+  messageSlice.actions;
 
 export default messageSlice.reducer;
