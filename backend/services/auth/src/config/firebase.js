@@ -1,4 +1,5 @@
-import admin from 'firebase-admin';
+import { cert, getApps, initializeApp, getApp } from 'firebase-admin/app';
+
 import fs from 'fs';
 import path from 'path';
 
@@ -10,19 +11,19 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
 } else {
   const secretPath = '/etc/secrets/serviceAccountKey.json';
   const localPath = path.resolve(process.cwd(), 'services/auth/serviceAccountKey.json');
+
   const finalPath = fs.existsSync(secretPath) ? secretPath : localPath;
 
   serviceAccount = JSON.parse(fs.readFileSync(finalPath, 'utf8'));
 }
 
-// Check initialized apps safely across CJS/ESM wrappers
-const apps = admin.apps || admin.default?.apps || [];
+// Initialize Firebase Admin safely
+const app =
+  getApps().length === 0
+    ? initializeApp({
+        credential: cert(serviceAccount),
+      })
+    : getApp();
 
-if (apps.length === 0) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-}
-
-export const app = admin.app();
-export default admin;
+export { app };
+export default app;
