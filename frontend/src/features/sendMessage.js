@@ -3,7 +3,7 @@ import backendApi from '../../utils/axios';
 
 const sendMessage = async (payload) => {
   try {
-    const { data } = await backendApi.post('/api/agent/chat', payload);
+    const { data } = await backendApi.post('/agent/chat', payload);
     return data;
   } catch (error) {
     console.log(error);

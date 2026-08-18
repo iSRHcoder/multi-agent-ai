@@ -14,7 +14,7 @@ const Home = () => {
 
   const handleLogin = async (token) => {
     try {
-      const { data } = await backendApi.post('/api/auth/login', { token });
+      const { data } = await backendApi.post('/auth/login', { token });
 
       dispatch(setUserData(data));
     } catch (error) {

@@ -3,7 +3,7 @@ import backendApi from '../../utils/axios.js';
 export const updateConversation = async (payload) => {
   try {
     const { data } = await backendApi.post(
-      '/api/chat/update-conversation',
+      '/chat/update-conversation',
       payload
     );
 
