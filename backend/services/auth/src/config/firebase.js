@@ -2,20 +2,20 @@ import admin from 'firebase-admin';
 import fs from 'fs';
 import path from 'path';
 
-let serviceAccount;
+const secretPath = '/etc/secrets/serviceAccountKey.json';
+const localPath = path.resolve(process.cwd(), 'services/auth/serviceAccountKey.json');
 
-if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-} else {
-  // Local fallback
-  const filePath = path.resolve(process.cwd(), 'services/auth/serviceAccountKey.json');
-  serviceAccount = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-}
+const finalPath = fs.existsSync(secretPath) ? secretPath : localPath;
+const serviceAccount = JSON.parse(fs.readFileSync(finalPath, 'utf8'));
 
+let app;
 if (!admin.apps.length) {
-  admin.initializeApp({
+  app = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
+} else {
+  app = admin.app();
 }
 
+export { app };
 export default admin;
