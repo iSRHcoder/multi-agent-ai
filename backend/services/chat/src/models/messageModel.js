@@ -5,19 +5,30 @@ const messageSchema = new mongoose.Schema(
     conversationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Conversation',
+      required: true,
     },
     role: {
       type: String,
       enum: ['user', 'assistant'],
+      required: true,
     },
     content: {
       type: String,
+    },
+    images: {
+      type: [String],
+      default: [],
     },
   },
   {
     timestamps: true,
   }
 );
+
+messageSchema.index({
+  conversationId: 1,
+  createdAt: 1,
+});
 
 const Message = mongoose.model('Message', messageSchema);
 export default Message;
