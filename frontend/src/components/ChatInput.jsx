@@ -1,4 +1,15 @@
-import { Mic, Paperclip, Send } from 'lucide-react';
+import {
+  Code2,
+  FileText,
+  Globe,
+  ImageIcon,
+  MessageSquare,
+  Mic,
+  Paperclip,
+  Presentation,
+  Send,
+  Zap,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import sendMessage from '../features/sendMessage';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +28,7 @@ import {
 
 const ChatInput = () => {
   const [value, setValue] = useState('');
+  const [selectedAgent, setSelectedAgent] = useState('Auto');
   const { selectedConversation } = useSelector((state) => state.conversation);
   const { messages, isAiResponding } = useSelector((state) => state.message);
 
@@ -63,6 +75,7 @@ const ChatInput = () => {
     const payload = {
       prompt,
       conversationId: conversation?._id,
+      agent: selectedAgent.toLowerCase(),
     };
 
     // Add user message immediately
@@ -90,9 +103,11 @@ const ChatInput = () => {
           _id: `temp-ai-${Date.now()}`,
           conversationId: conversation._id,
           role: 'assistant',
-          content: data.response,
+          content: data.answer,
+          images: data.images,
         })
       );
+      console.log(data);
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {
@@ -108,9 +123,61 @@ const ChatInput = () => {
     }
   };
 
+  const agents = [
+    {
+      id: 'auto',
+      icon: Zap,
+      label: 'Auto',
+    },
+    { id: 'chat', icon: MessageSquare, label: 'Chat' },
+    {
+      id: 'coding',
+      icon: Code2,
+      label: 'Coding',
+    },
+    {
+      id: 'pdf',
+      icon: FileText,
+      label: 'PDF',
+    },
+    {
+      id: 'ppt',
+      icon: Presentation,
+      label: 'PPT',
+    },
+    {
+      id: 'image',
+      icon: ImageIcon,
+      label: 'Image',
+    },
+    {
+      id: 'search',
+      icon: Globe,
+      label: 'Search',
+    },
+  ];
+
   return (
     <div className="w-full overflow-hidden border-t border-white/6 bg-[#0d0f14] px-3 py-4 md:px-5">
       <div className="flex flex-col gap-2 rounded-2xl border border-white/7 bg-white/3 px-4 pt-3.5 pb-3">
+        <div className="flex w-[80%] flex-wrap gap-2 pr-2">
+          {agents.map((agent) => {
+            const isActive = selectedAgent === agent.label;
+            const Icon = agent.icon;
+            return (
+              <div
+                onClick={() => setSelectedAgent(agent.label)}
+                className={`inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition-all ${isActive ? 'to-voilet-600 border-transparent bg-linear-to-r from-indigo-500 text-white shadow-[0_1px_8px_rgba(99,102,241,.35)]' : 'border-white/6 bg-white/3 text-slate-400 hover:bg-white/7 '}`}
+              >
+                <Icon
+                  size={14}
+                  className={isActive ? 'text-white' : 'text-slate-500'}
+                />
+                {agent.label}
+              </div>
+            );
+          })}
+        </div>
         <textarea
           className="scrollbar:none {&::-webkit-scrollbar]:hidden w-full resize-none bg-transparent text-[14px] leading-relaxed text-slate-200 outline-none placeholder:text-slate-600 disabled:opacity-50"
           placeholder="Ask Anything..."

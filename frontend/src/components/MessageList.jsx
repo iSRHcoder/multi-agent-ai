@@ -175,6 +175,7 @@ const MessageList = () => {
                 key={msg._id}
                 role={msg.role}
                 content={msg.content}
+                images={msg.images || []}
               />
             ))}
 
