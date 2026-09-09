@@ -26,7 +26,7 @@ const Home = () => {
     const data = await signInWithPopup(auth, provider);
     const token = await data.user.getIdToken();
     await handleLogin(token);
-    console.log('data:', data);
+
   };
 
   return (

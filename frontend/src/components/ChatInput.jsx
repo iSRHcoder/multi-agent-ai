@@ -34,86 +34,171 @@ const ChatInput = () => {
 
   const dispatch = useDispatch();
 
-  const handleSendMessage = async () => {
-    const prompt = value.trim();
-    if (!prompt || isAiResponding) return;
+//   const handleSendMessage = async () => {
+//     const prompt = value.trim();
+//     if (!prompt || isAiResponding) return;
 
-    let conversation = selectedConversation;
+//     let conversation = selectedConversation;
 
-    if (!conversation) {
-      const conv = await createConversation();
+//     if (!conversation) {
+//       const conv = await createConversation();
 
-      if (!conv?._id) {
-        console.error('Failed to create conversation');
-        return;
-      }
+//       if (!conv?._id) {
+//         console.error('Failed to create conversation');
+//         return;
+//       }
 
-      dispatch(setSelectedConversation(conv));
-      dispatch(addConversation(conv));
+//       dispatch(setSelectedConversation(conv));
+//       dispatch(addConversation(conv));
 
-      conversation = conv;
+//       conversation = conv;
+//     }
+
+//     if (conversation.title === 'New Chat') {
+//       try {
+//         const updatedConversation = await updateConversation({
+//           id: conversation._id,
+//           title: prompt.slice(0, 40),
+//         });
+
+//         dispatch(
+//           setConvTitle({
+//             conversationId: conversation._id,
+//             title: updatedConversation.title,
+//           })
+//         );
+//       } catch (error) {
+//         console.error('Failed to update conversation title:', error);
+//       }
+//     }
+
+//     const payload = {
+//       prompt,
+//       conversationId: conversation?._id,
+//       agent: selectedAgent.toLowerCase(),
+//     };
+
+//     // Add user message immediately
+//     dispatch(
+//       addMessage({
+//         _id: `temp-user-${Date.now()}`,
+//         conversationId: conversation._id,
+//         role: 'user',
+//         content: prompt,
+//         images: data?.images || [],
+//       })
+//     );
+
+//     // Clear input
+//     setValue('');
+
+//     try {
+//       dispatch(setAiResponding(true));
+//       const data = await sendMessage(payload);
+
+//       console.log('AI RESPONSE:', data);
+// console.log('AI ANSWER:', data?.answer);
+
+
+
+//       // Add AI response
+//       dispatch(
+//         addMessage({
+//           _id: `temp-ai-${Date.now()}`,
+//           conversationId: conversation._id,
+//           role: 'assistant',
+//           content: data.answer,
+//           images: data.images,
+//         })
+//       );
+//       console.log(data);
+//     } catch (error) {
+//       console.error('Failed to send message:', error);
+//     } finally {
+//       dispatch(setAiResponding(false));
+//     }
+//   };
+
+const handleSendMessage = async () => {
+  const prompt = value.trim();
+
+  if (!prompt || isAiResponding) return;
+
+  let conversation = selectedConversation;
+
+  if (!conversation) {
+    const conv = await createConversation();
+
+    if (!conv?._id) {
+      console.error('Failed to create conversation');
+      return;
     }
 
-    if (conversation.title === 'New Chat') {
-      try {
-        const updatedConversation = await updateConversation({
-          id: conversation._id,
-          title: prompt.slice(0, 40),
-        });
+    dispatch(setSelectedConversation(conv));
+    dispatch(addConversation(conv));
 
-        dispatch(
-          setConvTitle({
-            conversationId: conversation._id,
-            title: updatedConversation.title,
-          })
-        );
-      } catch (error) {
-        console.error('Failed to update conversation title:', error);
-      }
-    }
+    conversation = conv;
+  }
 
-    const payload = {
-      prompt,
-      conversationId: conversation?._id,
-      agent: selectedAgent.toLowerCase(),
-    };
-
-    // Add user message immediately
-    dispatch(
-      addMessage({
-        _id: `temp-user-${Date.now()}`,
-        conversationId: conversation._id,
-        role: 'user',
-        content: prompt,
-      })
-    );
-
-    // Clear input
-    setValue('');
-
+  if (conversation.title === 'New Chat') {
     try {
-      dispatch(setAiResponding(true));
-      const data = await sendMessage(payload);
+      const updatedConversation = await updateConversation({
+        id: conversation._id,
+        title: prompt.slice(0, 40),
+      });
 
-      console.log(data);
-
-      // Add AI response
       dispatch(
-        addMessage({
-          _id: `temp-ai-${Date.now()}`,
+        setConvTitle({
           conversationId: conversation._id,
-          role: 'assistant',
-          content: data.answer,
-          images: data.images,
+          title: updatedConversation.title,
         })
       );
-      console.log(data);
     } catch (error) {
-      console.error('Failed to send message:', error);
-    } finally {
-      dispatch(setAiResponding(false));
+      console.error('Failed to update conversation title:', error);
     }
+  }
+
+  const payload = {
+    prompt,
+    conversationId: conversation._id,
+    agent: selectedAgent.toLowerCase(),
   };
+
+  // Add user message immediately
+  dispatch(
+    addMessage({
+      _id: `temp-user-${Date.now()}`,
+      conversationId: conversation._id,
+      role: 'user',
+      content: prompt,
+      images: [],
+    })
+  );
+
+  setValue('');
+  dispatch(setAiResponding(true));
+
+  try {
+    const data = await sendMessage(payload);
+
+    console.log('AI RESPONSE:', data);
+
+    // Add AI response immediately
+    dispatch(
+      addMessage({
+        _id: `temp-ai-${Date.now()}`,
+        conversationId: conversation._id,
+        role: 'assistant',
+        content: data?.answer || data?.response || data?.message || '',
+        images: data?.images || [],
+      })
+    );
+  } catch (error) {
+    console.error('Failed to send message:', error);
+  } finally {
+    dispatch(setAiResponding(false));
+  }
+};
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -166,6 +251,7 @@ const ChatInput = () => {
             const Icon = agent.icon;
             return (
               <div
+              key={agent.id}
                 onClick={() => setSelectedAgent(agent.label)}
                 className={`inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition-all ${isActive ? 'to-voilet-600 border-transparent bg-linear-to-r from-indigo-500 text-white shadow-[0_1px_8px_rgba(99,102,241,.35)]' : 'border-white/6 bg-white/3 text-slate-400 hover:bg-white/7 '}`}
               >

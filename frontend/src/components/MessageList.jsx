@@ -66,7 +66,7 @@ const MessageList = () => {
 
     // Small delay makes sure the DOM has rendered the messages
     requestAnimationFrame(() => {
-      scrollToBottom('auto');
+      scrollToBottom('smooth');
     });
   }, [selectedConversation, messages]);
 
