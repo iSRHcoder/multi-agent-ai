@@ -62,7 +62,7 @@ export const updateConversation = async (req, res) => {
 
 export const saveMessage = async (req, res) => {
   try {
-    const { conversationId, role, content } = req.body;
+    const { conversationId, role, content, images } = req.body;
 
     if (!conversationId || !role || !content) {
       return res.status(404).json({ message: 'No conversationId or role or content' });
@@ -72,6 +72,7 @@ export const saveMessage = async (req, res) => {
       conversationId,
       content,
       role,
+      images,
     });
     res.status(200).json(message);
   } catch (error) {
