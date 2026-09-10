@@ -7,6 +7,22 @@ import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github-dark.css';
 import { X } from 'lucide-react';
 
+const isImageUrl = (url = '') => {
+  try {
+    const parsedUrl = new URL(url);
+
+    const pathname = parsedUrl.pathname.toLowerCase();
+
+    return (
+      /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(pathname) ||
+      parsedUrl.hostname.includes('images') ||
+      parsedUrl.hostname.includes('image')
+    );
+  } catch {
+    return false;
+  }
+};
+
 const MessageBubble = ({ role, content, images }) => {
   const isUser = role === 'user';
   const [lightBox, setLightBox] = useState(null);
@@ -117,16 +133,37 @@ const MessageBubble = ({ role, content, images }) => {
                   em: ({ children }) => <em className="italic">{children}</em>,
 
                   // Links
-                  a: ({ children, href }) => (
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-400 underline decoration-blue-400/40 underline-offset-2 hover:text-blue-300"
-                    >
-                      {children}
-                    </a>
-                  ),
+                  a: ({ children, href }) => {
+                    const text = String(children);
+                  
+                    // If this is an image link, render the image directly
+                    if (href && (isImageUrl(href) || text.toLowerCase() === 'view')) {
+                      return (
+                        <img
+                          src={href}
+                          alt="Image"
+                          loading="lazy"
+                          onClick={() => setLightBox(href)}
+                          onError={(e) => {
+                            console.error('Broken image URL:', href);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                          className="my-2 h-32 w-44 cursor-zoom-in rounded-xl border border-white/10 object-cover transition hover:opacity-90"
+                        />
+                      );
+                    }
+                  
+                    return (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 underline decoration-blue-400/40 underline-offset-2 hover:text-blue-300"
+                      >
+                        {children}
+                      </a>
+                    );
+                  },
 
                   // Blockquote
                   blockquote: ({ children }) => (
@@ -247,6 +284,7 @@ const MessageBubble = ({ role, content, images }) => {
             <X />
           </button>
           <img
+          loading="lazy"
             src={lightBox}
             className="max-h-[85vh] max-w-[90vw] rounded-2xl border border-white/10 object-contain shadow-2xl"
           />

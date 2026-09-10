@@ -128,6 +128,7 @@ const SideBar = () => {
         >
           {userData?.avatar && !imageError ? (
             <img
+            loading="lazy"
               className="h-9 w-9 rounded-[10px] border-2 border-indigo-500/25 object-cover"
               src={userData?.avatar}
               alt={`${userData?.name} avatar`}
@@ -229,6 +230,7 @@ const SideBar = () => {
               <div className="relative shrink-0">
                 {userData?.avatar && !imageError ? (
                   <img
+                  loading="lazy"
                     className="h-9 w-9 rounded-[10px] border-2 border-indigo-500/25 object-cover"
                     src={userData?.avatar}
                     alt={`${userData?.name} avatar`}

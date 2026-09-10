@@ -6,13 +6,14 @@ export const searchAgent = async (state) => {
       query: state.prompt,
     });
     console.log(results);
+
     return {
       ...state,
       searchResults: results.results ?? [],
       images: results.images,
     };
   } catch (error) {
-    console.log(error);
+    console.error('[SEARCH AGENT ERROR]', error);
     return {
       ...state,
       searchResults: [],
