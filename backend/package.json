@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently -n DOCKER,GATEWAY,AUTH,CHAT,AGENT \"docker compose up\" \"npm run dev --prefix gateway\" \"npm run dev --prefix services/auth\" \"npm run dev --prefix services/chat\" \"npm run dev --prefix services/agent\""
+    "dev": "concurrently -n GATEWAY,AUTH,CHAT,AGENT \"npm run dev --prefix gateway\" \"npm run dev --prefix services/auth\" \"npm run dev --prefix services/chat\" \"npm run dev --prefix services/agent\""
   },
   "keywords": [],
   "author": "",
