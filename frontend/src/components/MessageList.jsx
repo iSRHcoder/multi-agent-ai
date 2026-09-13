@@ -76,7 +76,14 @@ const MessageList = () => {
       <div
         ref={messagesContainerRef}
         onScroll={checkScrollPosition}
-        className="relative h-full space-y-5 overflow-y-auto px-6 py-6 [&::-webkit-scrollbar]:hidden"
+        className="relative h-full space-y-5 overflow-y-auto overflow-x-hidden px-6 py-6
+        [scrollbar-width:thin]
+        [scrollbar-color:rgba(100,116,139,0.5)_transparent]
+        [&::-webkit-scrollbar]:w-1.5
+        [&::-webkit-scrollbar-track]:bg-transparent
+        [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:bg-slate-600/50
+        hover:[&::-webkit-scrollbar-thumb]:bg-slate-500/70"
       >
         {/* ================= SKELETON ================= */}
         <div
