@@ -65,7 +65,7 @@ ${state.prompt}
 `;
 
   const response = await llm.invoke(prompt);
-  console.log('response:', response);
+  //console.log('response:', response);
 
   return {
     ...state,

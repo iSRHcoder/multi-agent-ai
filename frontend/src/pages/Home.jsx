@@ -5,7 +5,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../redux/userSlice';
 import SideBar from '../components/SideBar';
-import ArtEffect from '../components/ArtEffect';
+import Artifact from '../components/Artifact';
 import ChatArea from '../components/ChatArea';
 
 const Home = () => {
@@ -33,7 +33,7 @@ const Home = () => {
     <div className="flex h-screen overflow-hidden bg-[#0d0f14] text-white">
       <SideBar />
       <ChatArea />
-      <ArtEffect />
+      <Artifact />
 
       {!userData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
