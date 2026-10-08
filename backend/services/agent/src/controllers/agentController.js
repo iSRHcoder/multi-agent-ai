@@ -6,7 +6,7 @@ export const agent = async (req, res) => {
   try {
     const { prompt, conversationId, agent } = req.body;
 
-    await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
+    await axios.post(`${process.env.CHAT_SERVICE}/save-message`, { 
       conversationId,
       role: 'user',
       content: prompt,
@@ -15,7 +15,7 @@ export const agent = async (req, res) => {
     const result = await graph.invoke({
       prompt,
       conversationId,
-      agent: agent || 'auto',
+      agent: agent || 'auto', 
     });
 
     const response = result.aiResponse;
